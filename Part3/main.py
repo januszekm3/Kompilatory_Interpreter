@@ -7,7 +7,6 @@ from Part1.Cparser import Cparser as Cparser
 from TypeChecker import TypeChecker
 from Interpreter import Interpreter
 
-
 if __name__ == '__main__':
 
     try:
