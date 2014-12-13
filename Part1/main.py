@@ -1,4 +1,3 @@
-__author__ = 'Janusz'
 
 import sys
 import ply.yacc as yacc
@@ -18,3 +17,4 @@ if __name__ == '__main__':
     parser = yacc.yacc(module=Cparser)
     text = file.read()
     parser.parse(text, lexer=Cparser.scanner)
+
