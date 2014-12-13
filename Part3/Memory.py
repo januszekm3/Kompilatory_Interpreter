@@ -1,5 +1,5 @@
 __author__ = 'Janusz'
-# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
+# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html without any changes
 
 class Memory:
 
@@ -13,7 +13,7 @@ class Memory:
 
 
 class MemoryStack:
-
+                                                                             
     def __init__(self, memory=None): # initialize memory stack with memory <memory>
 
     def get(self, name):             # get from memory stack current value of variable <name>
@@ -25,3 +25,5 @@ class MemoryStack:
     def push(self, memory): # push memory <memory> onto the stack
 
     def pop(self):          # pops the top memory from the stack
+
+

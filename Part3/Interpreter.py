@@ -1,14 +1,13 @@
 __author__ = 'Janusz'
-# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
+# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html without any changes
 
-import AST
+import Part1.AST as AST
 import SymbolTable
 from Memory import *
 from Exceptions import  *
 from visit import *
 
 class Interpreter(object):
-
 
     @on('node')
     def visit(self, node):
@@ -44,3 +43,5 @@ class Interpreter(object):
         while node.cond.accept(self):
             r = node.body.accept(self)
         return r
+
+

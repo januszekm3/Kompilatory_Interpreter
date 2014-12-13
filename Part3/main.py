@@ -1,9 +1,9 @@
 __author__ = 'Janusz'
-# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
+# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html without any changes
 
 import sys
 import ply.yacc as yacc
-from Cparser import Cparser
+from Part1.Cparser import Cparser as Cparser
 from TypeChecker import TypeChecker
 from Interpreter import Interpreter
 
@@ -34,3 +34,4 @@ if __name__ == '__main__':
     # ast.accept(OptimizationPass1())
     # ast.accept(OptimizationPass2())
     # ast.accept(CodeGenerator())
+   
