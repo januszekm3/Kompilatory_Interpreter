@@ -1,11 +1,11 @@
 __author__ = 'Janusz'
+# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
 
 import AST
 import SymbolTable
 from Memory import *
 from Exceptions import  *
 from visit import *
-
 
 class Interpreter(object):
 
