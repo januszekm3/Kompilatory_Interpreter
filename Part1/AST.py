@@ -19,12 +19,10 @@ class UnExpr(Expr):
     def __init__(self, expr):
         self.expr = expr
 
-
 class FunCall(Expr):
     def __init__(self, name, args):
         self.name = name
         self.args = args
-
 
 class BrackExpr(Expr):
     def __init__(self, expr):
