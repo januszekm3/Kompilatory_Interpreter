@@ -1,7 +1,10 @@
-
 class Node(object):
-    def __str__(self):
-        return self.printTree()
+    def accept(self, visitor):
+        return visitor.visit(self)
+
+#class Node(object):
+#    def __str__(self):
+#        return self.printTree()
 
 class Const(Node):
     def __init__(self, value):
@@ -20,12 +23,10 @@ class UnExpr(Expr):
     def __init__(self, expr):
         self.expr = expr
 
-
 class FunCall(Expr):
     def __init__(self, name, args):
         self.name = name
         self.args = args
-
 
 class BrackExpr(Expr):
     def __init__(self, expr):
@@ -165,4 +166,5 @@ class String(Const):
 class Variable(Node):
     pass
     #...
+
 # ...

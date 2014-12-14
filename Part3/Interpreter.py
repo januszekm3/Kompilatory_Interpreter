@@ -1,7 +1,7 @@
 __author__ = 'Janusz'
 # File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
 
-import Part1.AST as AST
+import AST
 import SymbolTable
 from Memory import *
 from Exceptions import *
@@ -48,17 +48,18 @@ class Interpreter(object):
     def visit(self, expr):
         pass
 
+
     @when(AST.Init)
     def visit(self, node):
-        if len(self.functionMemories) == 0:
-            self.globalMemory.insert(node.id, node.expression.accept(self))
-        else:
-            self.functionMemories[len(self.functionMemories) - 1].put(node.id, node.expression.accept(self))
+        value_accept = node.value.accept(self)
+        self.globalMemory.peek().put(node.name, value_accept)
+        return value_accept
+
 
     @when(AST.Inits)
     def visit(self, node):
-        for child in node.children:
-            child.accept(self)
+        for i in node.list:
+            i.accept(self)
 
     @when(AST.Declaration)
     def visit(self, node):
@@ -66,10 +67,8 @@ class Interpreter(object):
 
     @when(AST.Declarations)
     def visit(self, node):
-        for child in node.children:
-            child.accept(self)
-
-    #@when(AST.Epsilon)
+        for i in node.list:
+            i.accept(self)
 
     @when(AST.Arg)
     def visit(self, node):
@@ -77,8 +76,8 @@ class Interpreter(object):
 
     @when(AST.ArgsList)
     def visit(self, node):
-        for child in node.children:
-            child.accept(self)
+        for i in node.list:
+            i.accept(self)
 
     @when(AST.Condition)
     def visit(self, expr):
@@ -86,8 +85,8 @@ class Interpreter(object):
 
     @when(AST.ExprList)
     def visit(self, node):
-        for child in node.children:
-            child.accept(self)
+        for i in node.list:
+            i.accept(self)
 
     @when(AST.Instruction)
     def visit(self, node):
@@ -99,8 +98,9 @@ class Interpreter(object):
 
     @when(AST.Assignment)
     def visit(self, node):
-        if len(self.functionMemories) == 0 or self.functionMemories[len(self.functionMemories) - 1].put_existing(node.id, node.expression.accept(self)) is False:
-            self.globalMemory.set(node.id, node.expression.accept(self))
+        expr_accept = node.expr.accept(self)
+        self.globalMemory.set(node.name, expr_accept)
+        return expr_accept
 
     @when(AST.ReturnInstr)
     def visit(self, node):
@@ -123,14 +123,26 @@ class Interpreter(object):
     def visit(self, instruction):
         pass
 
-    #@when(AST.IfInstr)
+    @when(AST.IfInstr)
+    def visit(self, node):
+        if node.cond.accept(self):
+            return node.instr.accept(self)
+        else:
+            pass
 
-    #@when(AST.IfElseInstr)
+    @when(AST.IfElseInstr)
+    def visit(self, node):
+        if node.cond.accept(self):
+            return node.instr.accept(self)
+        elif node.elseinstr:
+            return node.elseinstr.accept(self)
+        else:
+            pass
 
     @when(AST.Instructions)
     def visit(self, node):
-        for instruction in node.instructions:
-            instruction.accept(self)
+        for i in node.list:
+            i.accept(self)
 
     @when(AST.WhileInstr)
     def visit(self, node):
@@ -143,8 +155,8 @@ class Interpreter(object):
     def visit(self, node):
         while True:
             try:
-                node.instructions.accept(self)
-                if node.condition.accept(self):
+                node.instr.accept(self)
+                if node.cond.accept(self):
                     break
             except BreakException:
                 break
@@ -153,47 +165,36 @@ class Interpreter(object):
 
     @when(AST.CompoundInstr)
     def visit(self, node):
-        function = False
-        if len(self.functionMemories) == 0:
-            self.globalMemory.push(Memory("compound"))
-        else:
-            function = True
-            self.functionMemories[len(self.functionMemories) - 1].push(Memory("compound"))
-        node.declarations.accept(self)
-        node.instructions.accept(self)
-
-        if function is False:
-            self.globalMemory.pop()
-        else:
-            self.functionMemories[len(self.functionMemories) - 1].pop()
+        node.decl.accept(self)
+        node.instr.accept(self)
 
     @when(AST.FunDef)
     def visit(self, node):
-        node.compound_instr.accept(self)
+        self.globalMemory.peek().put(node.name, node)
 
     @when(AST.FunDefs)
     def visit(self, node):
-        for fundef in node.fundefs:
-            self.globalMemory.insert(fundef.id, fundef)
+        for i in node.list:
+            i.accept(self)
 
     @when(AST.Program)
     def visit(self, node):
-        node.declarations.accept(self)
-        node.fundefs.accept(self)
-        node.instructions.accept(self)
+        node.decl.accept(self)
+        node.fun.accept(self)
+        node.instr.accept(self)
 
     @when(AST.Integer)
-    def visit(self, const):
-        pass
+    def visit(self, node):
+        return int(node.value)
 
     @when(AST.Float)
-    def visit(self, const):
-        pass
+    def visit(self, node):
+        return float(node.value)
 
     @when(AST.String)
-    def visit(self, const):
-        pass
+    def visit(self, node):
+        return node.value
 
     @when(AST.Variable)
     def visit(self, node):
-        pass
+        return self.globalMemory.get(node.name)

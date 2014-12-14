@@ -1,16 +1,25 @@
 __author__ = 'Janusz'
-# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html without any changes
+# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
 
 import sys
 import ply.yacc as yacc
-from Part1.Cparser import Cparser as Cparser
+from Part1.Cparser import Cparser
 from TypeChecker import TypeChecker
 from Interpreter import Interpreter
 
 if __name__ == '__main__':
 
     try:
-        filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"
+        filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\fact.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\fib.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\funcdef.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\gcd.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\if.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\ifelse.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\loops.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\primes.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "tests\\scopes.in"
         file = open(filename, "r")
     except IOError:
         print("Cannot open {0} file".format(filename))
@@ -19,28 +28,16 @@ if __name__ == '__main__':
     Cparser = Cparser()
     parser = yacc.yacc(module=Cparser)
     text = file.read()
-    parser.parse(text, lexer=Cparser.scanner)
 
     ast = parser.parse(text, lexer=Cparser.scanner)
-    ast.accept(TypeChecker())
-
-    # jesli wizytor TypeChecker z implementacji w poprzednim lab korzystal z funkcji accept
-    # to nazwa tej ostatniej dla Interpretera powinna zostac zmieniona, np. na accept2 ( ast.accept2(Interpreter()) )
-    # tak aby rozne funkcje accept z roznych implementacji wizytorow nie kolidowaly ze soba
-    ast.accept(Interpreter())
-
-    # in future
-    # ast.accept(OptimizationPass1())
-    # ast.accept(OptimizationPass2())
-    # ast.accept(CodeGenerator())
-
-    if ast == None:
-        sys.exit(-1)
-
-    try:
-        ast.printTree(0)
-        semantic_errors_found = TypeChecker().dispatch(ast)
-        if not semantic_errors_found:
+    if ast:
+        typeChecker = TypeChecker()
+        typeChecker.visit(ast)   # or alternatively ast.accept(typeChecker)
+        if typeChecker.isValid:
+            print "Type check finished"
             ast.accept(Interpreter())
-    except Exception:
-        print "Error while printing tree or performing type-check caused by previous syntax errors."
+            print "Interpretation finished"
+        else:
+            sys.stderr.write("Type check failed -> no interpretation")
+    else:
+        sys.stderr.write("Syntax check failed -> no type check & interpretation")
