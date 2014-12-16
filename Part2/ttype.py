@@ -16,7 +16,7 @@ ttype['+']['float']['error'] = 'error'
 ttype['+']['string'] = {}
 ttype['+']['string']['int'] = 'error'
 ttype['+']['string']['float'] = 'error'
-ttype['+']['string']['string'] = 'string'
+ttype['+']['string']['string'] = 'error'
 ttype['+']['string']['error'] = 'error'
 
 ttype['+']['error'] = {}
@@ -42,7 +42,7 @@ ttype['-']['float']['error'] = 'error'
 ttype['-']['string'] = {}
 ttype['-']['string']['int'] = 'error'
 ttype['-']['string']['float'] = 'error'
-ttype['-']['string']['string'] = 'string'
+ttype['-']['string']['string'] = 'error'
 ttype['-']['string']['error'] = 'error'
 
 ttype['-']['error'] = {}

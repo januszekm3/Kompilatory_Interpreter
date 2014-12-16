@@ -10,6 +10,7 @@ class NodeVisitor(object):
         visitor = getattr(self, method, self.generic_visit)
         return visitor(node)
 
+
     def generic_visit(self, node):        # Called if no explicit visitor function exists for a node.
         if isinstance(node, list):
             for elem in node:
@@ -27,6 +28,8 @@ class NodeVisitor(object):
     #def generic_visit(self, node):
     #    for child in node.children:
     #        self.visit(child)
+
+
 
 class TypeChecker(NodeVisitor):
     def __init__(self):
@@ -79,7 +82,10 @@ class TypeChecker(NodeVisitor):
                 else:
                     variable = cst.get(node.expr)
 
+
             return variable.type
+
+
 
     def visit_FunCall(self, node):
 
@@ -99,11 +105,13 @@ class TypeChecker(NodeVisitor):
 
         return funsymbol.type
 
+
     def visit_BrackExpr(self, node):
         type = self.visit(node.expr)
         if type == 'error':
             print "Wrong expression type at " + node.line.__str__()
         return type
+
 
     def visit_Init(self, node):
         type = self.visit(node.value)
@@ -137,6 +145,8 @@ class TypeChecker(NodeVisitor):
         for i in node.list:
             self.visit(i)
 
+
+
     def visit_Epsilon(self, node):
         pass
 
@@ -144,6 +154,7 @@ class TypeChecker(NodeVisitor):
         self.current_symbol_table.put(node.name, SymbolTable.VariableSymbol(node.name, node.type))
         self.carried_info["funsymbol"].argtypes.append(node.type)
         return node.type
+
 
     def visit_ArgsList(self, node):
         argtypes = []
@@ -213,6 +224,8 @@ class TypeChecker(NodeVisitor):
 
         return left
 
+
+
     def visit_ReturnInstr(self, node):
         right = self.visit(node.expr)
 
@@ -231,6 +244,7 @@ class TypeChecker(NodeVisitor):
 
         return left
 
+
     def visit_ContinueInstr(self, node):
         if self.in_loop == False:
             print "Continue used outside of a loop at " + node.line.__str__()
@@ -248,6 +262,7 @@ class TypeChecker(NodeVisitor):
     def visit_LabeledInstr(self, node):
         self.visit(node.instr)
 
+
     def visit_IfInstr(self, node):
         self.visit(node.cond)
 
@@ -256,6 +271,7 @@ class TypeChecker(NodeVisitor):
         self.current_symbol_table = newscope
         self.visit(node.instr)
         self.current_symbol_table = self.current_symbol_table.getParentScope()
+
 
     def visit_IfElseInstr(self, node):
         self.visit(node.cond)
@@ -272,9 +288,11 @@ class TypeChecker(NodeVisitor):
         self.visit(node.elseinstr)
         self.current_symbol_table = self.current_symbol_table.getParentScope()
 
+
     def visit_Instructions(self, node):
         for i in node.list:
             self.visit(i)
+
 
     def visit_WhileInstr(self, node):
         self.visit(node.cond)
@@ -289,6 +307,7 @@ class TypeChecker(NodeVisitor):
 
         self.in_loop = False
 
+
     def visit_RepeatInstr(self, node):
         self.visit(node.cond)
 
@@ -302,6 +321,7 @@ class TypeChecker(NodeVisitor):
 
         self.in_loop = False
 
+
     def visit_CompoundInstr(self, node):
         newscope = SymbolTable.SymbolTable(self.current_symbol_table, "compound" + self.counter.__str__())
         self.counter += 1
@@ -309,6 +329,7 @@ class TypeChecker(NodeVisitor):
         self.visit(node.decl)
         self.visit(node.instr)
         self.current_symbol_table = self.current_symbol_table.getParentScope()
+
 
     def visit_FunDef(self, node):
         funsymbol = SymbolTable.FunctionSymbol(node.name, node.type)
@@ -322,30 +343,22 @@ class TypeChecker(NodeVisitor):
         self.visit(node.args)
         self.visit(node.instr)
 
+
         self.carried_info["funsymbol"] = prevsym
         self.current_symbol_table = self.current_symbol_table.getParentScope()
+
 
     def visit_FunDefs(self, node):
         for i in node.list:
             self.visit(i)
+
 
     def visit_Program(self, node):
         self.visit(node.decl)
         self.visit(node.fun)
         self.visit(node.instr)
 
-    def visit_RelExpr(self, node):
-        type1 = self.visit(node.left)     # type1 = node.left.accept(self)
-        type2 = self.visit(node.right)    # type2 = node.right.accept(self)
-        # ...
-        #
 
-    def visit_Integer(self, node):
-        return 'int'
 
-    #def visit_Float(self, node):
-    # ...
-    #
 
-    # ...
-    #
+
