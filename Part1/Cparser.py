@@ -3,19 +3,14 @@
 from scanner import Scanner
 import AST
 import sys
-import TreePrinter
-
-
 
 class Cparser(object):
-
 
     def __init__(self):
         self.scanner = Scanner()
         self.scanner.build()
 
     tokens = Scanner.tokens
-
 
     precedence = (
        ("nonassoc", 'IFX'),
@@ -64,8 +59,6 @@ class Cparser(object):
             print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
             sys.exit(-1)
 
-
-
     def p_inits(self, p):
         """inits : inits ',' init
                  | init """
@@ -75,14 +68,9 @@ class Cparser(object):
         else:
             p[0] = AST.Inits(p.lineno, p[1], p[3])
 
-
-
     def p_init(self, p):
         """init : ID '=' expression """
         p[0] = AST.Init(p.lineno, p[1], p[3])
-
-
-
 
     def p_instructions(self, p):
         """instructions : instructions instruction
@@ -106,8 +94,6 @@ class Cparser(object):
                        | compound_instr"""
         p[0] = p[1]
 
-
-
     def p_print_instr(self, p):
         """print_instr : PRINT expression ';'
                        | PRINT error ';' """
@@ -118,18 +104,15 @@ class Cparser(object):
             print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
             sys.exit(-1)
 
-
     def p_labeled_instr(self, p):
         """labeled_instr : ID ':' instruction """
 
         p[0] = AST.LabeledInstr(p.lineno, p[1], p[3])
 
-
     def p_assignment(self, p):
         """assignment : ID '=' expression ';' """
 
         p[0] = AST.Assignment(p.lineno, p[1], p[3])
-
 
     def p_choice_instr(self, p):
         """choice_instr : IF '(' condition ')' instruction  %prec IFX
@@ -150,8 +133,6 @@ class Cparser(object):
                 print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
                 sys.exit(-1)
 
-
-
     def p_while_instr(self, p):
         """while_instr : WHILE '(' condition ')' instruction
                        | WHILE '(' error ')' instruction """
@@ -162,12 +143,10 @@ class Cparser(object):
             print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
             sys.exit(-1)
 
-
     def p_repeat_instr(self, p):
         """repeat_instr : REPEAT instructions UNTIL condition ';' """
 
         p[0] = AST.RepeatInstr(p.lineno, p[2], p[4])
-
 
     def p_return_instr(self, p):
         """return_instr : RETURN expression ';' """
@@ -189,7 +168,6 @@ class Cparser(object):
 
         p[0] = AST.CompoundInstr(p.lineno, p[2], p[3])
 
-
     def p_condition(self, p):
         """condition : expression"""
 
@@ -206,7 +184,6 @@ class Cparser(object):
                 p[0] = AST.Integer(p.lineno, p[1])
         else:
             p[0] = AST.String(p.lineno, p[1])
-
 
     def p_expression(self, p):
         """expression : const
@@ -252,7 +229,6 @@ class Cparser(object):
                 print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
                 sys.exit(-1)
 
-
     def p_expr_list_or_empty(self, p):
         """expr_list_or_empty : expr_list
                               | """
@@ -271,8 +247,6 @@ class Cparser(object):
         else:
             p[0] = AST.ExprList(p.lineno, p[1])
 
-
-
     def p_fundefs(self, p):
         """fundefs : fundef fundefs
                    |  """
@@ -287,7 +261,6 @@ class Cparser(object):
 
         p[0] = AST.FunDef(p.lineno, p[1], p[2], p[4], p[6])
 
-
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
                               | """
@@ -296,7 +269,6 @@ class Cparser(object):
             p[0] = p[1]
         else:
             p[0] = AST.Epsilon(p.lineno)
-
 
     def p_args_list(self, p):
         """args_list : args_list ',' arg
