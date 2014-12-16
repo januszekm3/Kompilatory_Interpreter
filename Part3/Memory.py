@@ -4,7 +4,7 @@ __author__ = 'Janusz'
 class Memory:
     def __init__(self, name):               # memory name
         self.name = name
-        self.memory = {}
+        self.memory = []
 
     def has_key(self, name):                # variable name
         return name in self.memory
