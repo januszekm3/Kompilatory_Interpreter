@@ -1,6 +1,6 @@
 class Node(object):
-    def accept(self, visitor):
-        return visitor.visit(self)
+    def accept(self, visitor, scope=0):
+        return visitor.visit(self, scope)
 
     def __init__(self):
         self.children = ()
