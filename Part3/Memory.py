@@ -1,51 +1,28 @@
-__author__ = 'Janusz'
-# File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
+class Memory(dict):
+    def __init__(self, parent_scope=None):
+        super(Memory, self).__init__()
+        self.parent_scope = parent_scope
 
-class Memory:
-    def __init__(self, name):               # memory name
-        self.name = name
-        self.memory = {}
-
-    def has_key(self, name):                # variable name
-        return name in self.memory
-
-    def get(self, name):                    # get from memory current value of variable <name>
-        if self.has_key(name):
-            return self.memory[name]
-        return None
-
-    def put(self, name, value):             # puts into memory current value of variable <name>
-        self.memory[name] = value
-
-class MemoryStack:
-    def __init__(self, memory=None):        # initialize memory stack with memory <memory>
-        self.stack = []
-        if memory is not None:
-            self.stack.append(memory)
+    def __getitem__(self, item):
+        if item in self.full_scope().keys():
+            return self.full_scope()[item]
         else:
-            self.stack.append(Memory("toplevel"))
+            return None
 
-    def get(self, name):                    # get from memory stack current value of variable <name>
-        indices = range(len(self.stack))
-        indices.reverse()
-        for i in indices:
-            if self.stack[i].has_key(name):
-                return self.stack[i].get(name)
-        return None
+    def scope_setitem(self, key, value):
+        if key in self.keys():
+            self[key] = value
+        elif self.parent_scope is not None:
+            self.parent_scope.scope_setitem(key, value)
+        else:
+            self[key] = value
 
-    def insert(self, name, value):          # inserts into memory stack variable <name> with value <value>
-        self.stack[-1].put(name, value)
+    def full_scope(self):
+        parent_full_scope = ((self.parent_scope is not None) and self.parent_scope.full_scope().items()) or []
+        return dict(parent_full_scope + self.items())
 
-    def set(self, name, value):             # sets variable <name> to value <value>
-        indices = range(len(self.stack))
-        indices.reverse()
-        for i in indices:
-            if self.stack[i].has_key(name):
-                self.stack[i].put(name, value)
-                break
+    def scope_keys(self):
+        return self.full_scope().keys()
 
-    def push(self, memory):                 # push memory <memory> onto the stack
-        self.stack.append(memory)
-
-    def pop(self):                          # pops the top memory from the stack
-        return self.stack.pop()
+class MemoryStack(dict):
+    pass
