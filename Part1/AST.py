@@ -30,7 +30,6 @@ class String(Const):
 
         self.children = ()
 
-
 class Expr(Node):
     pass
 
@@ -58,7 +57,6 @@ class FunCall(Expr):
         self.line = line
 
         self.children = ( args )
-
 
 class BrackExpr(Expr):
     def __init__(self, line, expr):
