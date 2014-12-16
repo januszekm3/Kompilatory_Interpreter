@@ -8,7 +8,6 @@ class Scanner(object):
             last_cr = 0
         return token.lexpos - last_cr
 
-
     def build(self):
         self.lexer = lex.lex(object=self)
 
@@ -17,7 +16,6 @@ class Scanner(object):
 
     def token(self):
         return self.lexer.token()
-
 
     literals = "{}()<>=;:,+-*/%&|^"
 
@@ -46,11 +44,9 @@ class Scanner(object):
         r'(\r\n)+'
         t.lexer.lineno += len(t.value) / 2
 
-
     def t_error(self, t):
         print("Illegal character '{0}' ({1}) in line {2}".format(t.value[0], hex(ord(t.value[0])), t.lexer.lineno))
         t.lexer.skip(1)
-
 
     def t_LINE_COMMENT(self, t):
         r'\#.*'
@@ -59,7 +55,6 @@ class Scanner(object):
     def t_BLOCK_COMMENT(self, t):
         r'/\*(.|\n)*?\*/'
         t.lexer.lineno += t.value.count('\n')
-
 
     def t_FLOAT(self, t):
         r"\d+(\.\d*)|\.\d+"
@@ -72,7 +67,6 @@ class Scanner(object):
     def t_STRING(self, t):
         r'\"([^\\\n]|(\\.))*?\"'
         return t
-
 
     t_EQ = r"=="
     t_NEQ = r"!="

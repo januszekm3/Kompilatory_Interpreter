@@ -3,8 +3,8 @@ class Node(object):
         return visitor.visit(self)
     def __init__(self):
         self.children = ()
-    def __str__(self):
-        return self.printTree()
+#    def __str__(self):
+#        return self.printTree()
 
 class Const(Node):
     pass
@@ -48,7 +48,6 @@ class UnExpr(Expr):
         self.line = line
 
         self.children = ( expr )
-
 
 class FunCall(Expr):
     def __init__(self, line, name, args):

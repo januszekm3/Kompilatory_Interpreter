@@ -7,7 +7,6 @@ def addToClass(cls):
         return func
     return decorator
 
-
 class TreePrinter:
 
     @addToClass(AST.Node)
@@ -29,7 +28,6 @@ class TreePrinter:
             str.remove(line)
         return "\n".join(str)
 
-
     @addToClass(AST.Declarations)
     def printTree(self):
         str = "DECL\n"
@@ -40,7 +38,6 @@ class TreePrinter:
                 for line in istr:
                     str += "| " + line + '\n'
         return str
-
 
     @addToClass(AST.Declaration)
     def printTree(self):
@@ -96,14 +93,12 @@ class TreePrinter:
     def printTree(self):
         return self.decl.__str__() + "\n" + self.instr.__str__() + "\n"
 
-
     @addToClass(AST.Instructions)
     def printTree(self):
         str = ""
         for i in self.list:
             str += i.__str__() + '\n'
         return str
-
 
     @addToClass(AST.IfInstr)
     def printTree(self):
@@ -186,7 +181,6 @@ class TreePrinter:
     @addToClass(AST.Const)
     def printTree(self):
         return self.value.__str__()
-
 
     @addToClass(AST.Epsilon)
     def printTree(self):

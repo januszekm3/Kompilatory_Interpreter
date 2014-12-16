@@ -2,7 +2,6 @@ import sys
 import ply.yacc as yacc
 from Cparser import Cparser
 
-
 if __name__ == '__main__':
 
     try:

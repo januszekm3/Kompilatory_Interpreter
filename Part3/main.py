@@ -4,7 +4,6 @@ __author__ = 'Janusz'
 import sys
 import ply.yacc as yacc
 from Part1.Cparser import Cparser
-from TypeChecker import TypeChecker
 from Interpreter import Interpreter
 
 if __name__ == '__main__':
@@ -32,13 +31,7 @@ if __name__ == '__main__':
 
     ast = parser.parse(text, lexer=Cparser.scanner)
     if ast:
-        typeChecker = TypeChecker()
-        typeChecker.visit(ast)   # or alternatively ast.accept(typeChecker)
-        if typeChecker.isValid:
-            print "Type check finished"
-            ast.accept(Interpreter())
-            print "Interpretation finished"
-        else:
-            sys.stderr.write("Type check failed -> no interpretation")
+        ast.accept(Interpreter())
+        print "Interpretation finished"
     else:
         sys.stderr.write("Syntax check failed -> no type check & interpretation")
