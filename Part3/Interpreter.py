@@ -52,8 +52,8 @@ class Interpreter(object):
         return optype[expr.op](r1, r2)
 
     @when(AST.UnExpr)
-    def visit(self, expr):
-        return expr
+    def visit(self, node):
+        return node.accept(self)
 
 #    @when(AST.FunCall)
 #    def visit(self, node):
