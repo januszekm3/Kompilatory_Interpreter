@@ -7,7 +7,7 @@ from TypeChecker import TypeChecker
 if __name__ == '__main__':
 
     try:
-        filename = sys.argv[1] if len(sys.argv) > 1 else "example.txt"
+        filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\example.txt"
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fib.in"
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\funcdef.in"

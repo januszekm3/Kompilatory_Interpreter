@@ -5,8 +5,8 @@ class Node(object):
     def __init__(self):
         self.children = ()
 
-    # def __str__(self):
-    #     return self.printTree()
+#    def __str__(self):
+#        return self.printTree()
 
 class Const(Node):
     pass
