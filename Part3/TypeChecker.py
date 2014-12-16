@@ -2,7 +2,6 @@ __author__ = 'Janusz'
 
 #!/usr/bin/python
 from collections import defaultdict
-from AST import *
 from SymbolTable import SymbolTable, FunctionSymbol, VariableSymbol
 
 ttype = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: None)))
@@ -25,32 +24,14 @@ ttype['*']['string']['int'] = 'string'
 for op in ['<', '>', '<=', '>=', '==', '!=']:
     ttype[op]['string']['string'] = 'int'
 
-
 class NodeVisitor(object):
     def visit(self, node):
         method = 'visit_' + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
-        #print "node {} has visitor {}".format(str(node), str(visitor))
         return visitor(node)
 
-    def generic_visit(self, node):        # Called if no explicit visitor function exists for a node.
-        if isinstance(node, list):
-            for elem in node:
-                self.visit(elem)
-        elif hasattr(node, "children"):
-            for child in node.children:
-                if isinstance(child, list):
-                    for item in child:
-                        if isinstance(item, Node):
-                            self.visit(item)
-                elif isinstance(child, Node):
-                    self.visit(child)
-
-                    # simpler version of generic_visit, not so general
-                    #def generic_visit(self, node):
-                    #    for child in node.children:
-                    #        self.visit(child)
-
+    def generic_visit(self, node): # Any of visitor function exists
+        return 1
 
 class TypeChecker(NodeVisitor):
     def __init__(self):
@@ -58,9 +39,25 @@ class TypeChecker(NodeVisitor):
         self.actType = ""
         self.isValid = True
 
-    #def visit_Node(object):
-    #def visit_Const(Node):
-    #def visit_Expr(Node):
+    def visit_Const(self, node):
+        value = node.value
+        if value[0] == '"' and value[len(value) - 1] == '"':
+            type = 'string'
+        else:
+            try:
+                int(value)
+                type = 'int'
+            except ValueError:
+                try:
+                    float(value)
+                    type = 'float'
+                except ValueError:
+                    print "line {1}: Value's {0} type is not recognized".format(value, node.line)
+                    self.found_any_errors = True
+        return type
+
+    def visit_Expr(self, node):
+        pass
 
     def visit_BinExpr(self, node):
         r1 = self.visit(node.left)
@@ -71,9 +68,15 @@ class TypeChecker(NodeVisitor):
             print "Bad expression {} in line {}".format(node.op, node.line)
         return ttype[op][r1][r2]
 
-    #def visit_UnExpr(Expr):
-    #def visit_FunCall(self, node):
-    #def visit_BrackExpr(Expr):
+    def visit_UnExpr(Expr):
+        pass
+
+    def visit_FunCall(self, node):
+        for i in node.instr:
+            i.accept(self)
+
+    def visit_BrackExpr(Expr):
+        pass
 
     def visit_Init(self, node):
         initType = self.visit(node.expr)
@@ -81,23 +84,27 @@ class TypeChecker(NodeVisitor):
                     initType == "float" and self.actType == "int"):
             if self.table.get(node.name) is not None:
                 self.isValid = False
-                print "Invalid definition of {} in line: {}. Entity redefined". \
-                    format(node.name, node.line)
+                print "Invalid definition of {} in line: {}.".format(node.name, node.line)
             else:
                 self.table.put(node.name, VariableSymbol(node.name, self.actType))
         else:
             self.isValid = False
             print "Bad assignment of {} to {} in line {}".format(initType, self.actType, node.line)
 
-    #def visit_Inits(Node):
+    def visit_Inits(self, node):
+        for i in node.list:
+            self.visit_Init(i)
 
     def visit_Declaration(self, node):
-        self.actType = node.type
-        self.visit(node.inits)
-        self.actType = ""
+        for init in node.inits.elements:
+            self.visit(init)
 
-    #def visit_Declarations(Node):
-    #def visit_Epsilon(Node):
+    def visit_Declarations(self, node):
+        for i in node.list:
+            self.visit_Declaration(i)
+
+    def visit_Epsilon(self, node):
+        pass
 
     def visit_Arg(self, node):
         if self.table.get(node.name) is not None:
@@ -108,18 +115,23 @@ class TypeChecker(NodeVisitor):
 
     def visit_ArgsList(self, node):
         for i in node.list:
-            self.visit(i)
-        self.actFunc.extractParams()
+            self.visit_Arg(i)
 
-    #def visit_Condition(Node):
-    #def visit_ExprList(Node):
-    #def visit_Instruction(Node):
+    def visit_Condition(self, node):
+        pass
+
+    def visit_ExprList(self, node):
+        for i in node.list:
+            self.visit_Expr(i)
+
+    def visit_Instruction(self, node):
+        pass
 
     def visit_PrintInstr(self, node):
         self.visit(node.expr)
 
     def visit_Assignment(self, node):
-        definition = self.table.getGlobal(node.id)
+        definition = self.table.getGlobal(node.name)
         type = self.visit(node.expr)
         if definition is None:
             self.isValid = False
@@ -129,30 +141,32 @@ class TypeChecker(NodeVisitor):
             print "Bad assignment of {} to {} in line {}.".format(type, definition.type, node.line)
 
     def visit_ReturnInstr(self, node):
-        if self.actFunc is None:
-            self.isValid = False
-            print "Return placed outside of a function in line {}".format(node.line)
-        else:
-            type = self.visit(node.expression)
-            if type != self.actFunc.type and (self.actFunc.type != "float" or type != "int"):
-                self.isValid = False
-                print "Invalid return type of {} in line {}. Expected {}".format(type, node.line, self.actFunc.type)
+        self.visit(node.returns)
 
-    #def visit_ContinueInstr(Instruction):
-    #def visit_BreakInstr(Instruction):
+    def visit_ContinueInstr(self, node):
+        pass
+
+    def visit_BreakInstr(self, node):
+        pass
 
     def visit_LabeledInstr(self, node):
         self.visit(node.instr)
 
     def visit_ChoiceInstruction(self, node):
-        self.visit(node.condition)
-        self.visit(node.action)
-        if node.alternateAction is not None:
-            self.visit(node.alternateAction)
+        pass
 
-    #def visit_IfInstr(ChoiceInstruction):
-    #def visit_IfElseInstr(ChoiceInstruction):
-    #def visit_Instructions(Instruction):
+    def visit_IfInstr(self, node):
+        self.visit(node.cond)
+        self.visit(node.instr)
+
+    def visit_IfElseInstr(self, node):
+        self.visit(node.cond)
+        self.visit(node.instr)
+        self.visit(node.elseinstr)
+
+    def visit_Instructions(self, node):
+        for i in node.list:
+            self.visit_Instruction(i)
 
     def visit_WhileInstruction(self, node):
         self.visit(node.condition)
@@ -165,27 +179,21 @@ class TypeChecker(NodeVisitor):
     def visit_CompoundInstr(self, node):
         innerScope = SymbolTable(self.table, "innerScope")
         self.table = innerScope
-        if node.declarations is not None:
-            self.visit(node.declarations)
-        self.visit(node.instructions)
+        if node.decl is not None:
+            self.visit(node.decl)
+        self.visit(node.instr)
         self.table = self.table.getParentScope()
 
     def visit_FunDef(self, node):
-        if self.table.get(node.name):
-            self.isValid = False
-            print "Function {} already defined. Line: {}".format(node.name, node.line)
-        else:
-            function = FunctionSymbol(node.name, node.retType, SymbolTable(self.table, node.name))
-            self.table.put(node.name, function)
-            self.actFunc = function
-            self.table = self.actFunc.table
-            if node.args is not None:
-                self.visit(node.args)
-            self.visit(node.body)
-            self.table = self.table.getParentScope()
-            self.actFunc = None
+        argList = []
+        for arg in node.args.elements:
+            a = self.visit(arg)
+            argList.append(a)
+        self.visit(node.instr)
 
-    #def visit_FunDefs(Node):
+    def visit_FunDefs(self, node):
+        for i in node.list:
+            self.visit_FunDef(i)
 
     def visit_Program(self, node):
         self.visit(node.decl)
@@ -208,28 +216,3 @@ class TypeChecker(NodeVisitor):
             print "Undefined symbol {} in line {}".format(node.op, node.line)
         else:
             return definition.type
-
-################
-
-    def visit_GroupedExpression(self, node):
-        return self.visit(node.interior)
-
-    def visit_InvocationExpression(self, node):
-        funDef = self.table.getGlobal(node.name)
-        if funDef is None or not isinstance(funDef, FunctionSymbol):
-            self.isValid = False
-            print "Function {} not defined. Line: {}".format(node.name, node.line)
-        else:
-            if ((node.args is None and funDef.params != [] ) or len(node.args.children) != len(funDef.params)):
-                self.isValid = False
-                print "Invalid number of arguments in line {}. Expected {}". \
-                    format(node.line, len(funDef.params))
-            else:
-                types = [self.visit(x) for x in node.args.children]
-                expectedTypes = funDef.params
-                for actual, expected in zip(types, expectedTypes):
-                    if actual != expected and not (actual == "int" and expected == "float"):
-                        self.isValid = False
-                        print "Mismatching argument types in line {}. Expected {}, got {}". \
-                            format(node.line, expected, actual)
-            return funDef.type

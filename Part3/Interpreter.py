@@ -1,22 +1,37 @@
 __author__ = 'Janusz'
 # File was downloaded from http://home.agh.edu.pl/~mkuta/tk/zadanie2c/zadanie2C.html
 
-import AST
-import SymbolTable
+import Part1.AST as AST
 from Memory import *
 from Exceptions import *
 from visit import *
 
+optype = {}
+optype["+"] = lambda x, y: x + y
+optype["-"] = lambda x, y: x - y
+optype["*"] = lambda x, y: x * y
+optype["/"] = lambda x, y: x / y
+optype["%"] = lambda x, y: x % y
+optype["<"] = lambda x, y: 1 if x < y else 0
+optype[">"] = lambda x, y: 1 if x > y else 0
+optype["shl"] = lambda x, y: x << y
+optype["shr"] = lambda x, y: x >> y
+optype["|"] = lambda x, y: x | y
+optype["&"] = lambda x, y: x & y
+optype["^"] = lambda x, y: x ^ y
+optype["<="] = lambda x, y: 1 if x <= y else 0
+optype[">="] = lambda x, y: 1 if x >= y else 0
+optype["=="] = lambda x, y: 1 if x == y else 0
+optype["!="] = lambda x, y: 1 if x != y else 0
+optype["&&"] = lambda x, y: 1 if (x and y) else 0
+optype["||"] = lambda x, y: 1 if (x or y) else 0
+
 class Interpreter(object):
     def __init__(self):
         self.globalMemory = MemoryStack(Memory("global"))
-        self.functionMemories = []
+        self.functionMemory = MemoryStack()
 
     @on('node')
-    def visit(self, node):
-        pass
-
-    @when(AST.Node)
     def visit(self, node):
         pass
 
@@ -31,30 +46,28 @@ class Interpreter(object):
     # @when(AST.BinOp) - Cannot find reference 'BinOp' in 'AST.py'
     # changed to AST.BinExpr
     @when(AST.BinExpr)
-    def visit(self, node):
-        r1 = node.left.accept(self)
-        r2 = node.right.accept(self)
-        return eval("a" + node.op + "b", {"a": r1, "b": r2})
+    def visit(self, expr):
+        r1 = expr.left.accept(self)
+        r2 = expr.right.accept(self)
+        return optype[expr.op](r1, r2)
 
     @when(AST.UnExpr)
     def visit(self, expr):
-        pass
+        return expr
 
     @when(AST.FunCall)
     def visit(self, node):
-        pass
+        args = node.args.accept(self)
+        fun = node.name.accept(self)
+        return fun(*args)
 
     @when(AST.BrackExpr)
     def visit(self, expr):
-        pass
-
+        return expr
 
     @when(AST.Init)
     def visit(self, node):
-        value_accept = node.value.accept(self)
-        self.globalMemory.peek().put(node.name, value_accept)
-        return value_accept
-
+        self.globalMemory.push(node.value.accept(self))
 
     @when(AST.Inits)
     def visit(self, node):
@@ -70,6 +83,10 @@ class Interpreter(object):
         for i in node.list:
             i.accept(self)
 
+    @when(AST.Epsilon)
+    def visit(selfself, node):
+        pass
+
     @when(AST.Arg)
     def visit(self, node):
         return node.name
@@ -81,7 +98,7 @@ class Interpreter(object):
 
     @when(AST.Condition)
     def visit(self, expr):
-        pass
+        return expr
 
     @when(AST.ExprList)
     def visit(self, node):
@@ -94,18 +111,19 @@ class Interpreter(object):
 
     @when(AST.PrintInstr)
     def visit(self, node):
-        print node.expr.accept(self)
+        value = node.expr.accept(self)
+        print value
+        return value
 
     @when(AST.Assignment)
     def visit(self, node):
-        expr_accept = node.expr.accept(self)
-        self.globalMemory.set(node.name, expr_accept)
-        return expr_accept
+        nea = node.expr.accept(self)
+#        self.globalMemory.set(node.name, nea)
+        return nea
 
     @when(AST.ReturnInstr)
     def visit(self, node):
-        value = node.expression.accept(self)
-        raise ReturnValueException(value)
+        raise ReturnValueException(node.expr.accept(self))
 
     @when(AST.ContinueInstr)
     def visit(self, node):
@@ -117,7 +135,7 @@ class Interpreter(object):
 
     @when(AST.LabeledInstr)
     def visit(self, node):
-        pass
+        node.instr.accept(self)
 
     @when(AST.ChoiceInstruction)
     def visit(self, instruction):
@@ -134,10 +152,8 @@ class Interpreter(object):
     def visit(self, node):
         if node.cond.accept(self):
             return node.instr.accept(self)
-        elif node.elseinstr:
-            return node.elseinstr.accept(self)
         else:
-            pass
+            return node.elseinstr.accept(self)
 
     @when(AST.Instructions)
     def visit(self, node):
@@ -147,21 +163,32 @@ class Interpreter(object):
     @when(AST.WhileInstr)
     def visit(self, node):
         r = None
-        while node.cond.accept(self):
-            r = node.body.accept(self)
+        try:
+            while node.cond.accept(self):
+                try:
+                    r = node.instr.accept(self, scope)
+                except ContinueException:
+                    pass
+        except BreakException:
+            pass
         return r
 
     @when(AST.RepeatInstr)
     def visit(self, node):
-        while True:
-            try:
-                node.instr.accept(self)
-                if node.cond.accept(self):
-                    break
-            except BreakException:
-                break
-            except ContinueException:
-                pass
+        run = True
+        r = None
+
+        try:
+            while run:
+                try:
+                    r = node.instr.accept(self)
+                except ContinueException:
+                    pass
+
+                run = not node.cond.accept(self, scope)
+        except BreakException:
+            pass
+        return r
 
     @when(AST.CompoundInstr)
     def visit(self, node):
@@ -170,7 +197,16 @@ class Interpreter(object):
 
     @when(AST.FunDef)
     def visit(self, node):
-        self.globalMemory.peek().put(node.name, node)
+        def fun(*args):
+            if len(args) != len(node.args):
+                raise Exception("{0} takes {1} argument(s); {2} given".format(node.id, node.arity(), len(args)))
+            for i in range(len(node.args)):
+                argument = node.args.elements[i]
+                self.functionMemory.insert(argument.name, args[i])
+            try:
+                node.instr.accept(self)
+            except ReturnValueException as e:
+                return e.value
 
     @when(AST.FunDefs)
     def visit(self, node):

@@ -1,8 +1,6 @@
 __author__ = 'Janusz'
 
 #!/usr/bin/python
-from collections import defaultdict
-
 class Symbol():
     pass
 
@@ -20,7 +18,6 @@ class FunctionSymbol(Symbol):
 
     def extractParams(self):
         self.params = [x.type for x in self.table.entries.values()]
-
 
 class SymbolTable(object):
     def __init__(self, parent, name):       # parent scope and symbol table name

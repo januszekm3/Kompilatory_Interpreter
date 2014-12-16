@@ -4,19 +4,18 @@ __author__ = 'Janusz'
 class Memory:
     def __init__(self, name):               # memory name
         self.name = name
-        self.dict = {}
+        self.memory = {}
 
     def has_key(self, name):                # variable name
-        return name in self.dict
+        return name in self.memory
 
     def get(self, name):                    # get from memory current value of variable <name>
         if self.has_key(name):
-            return self.dict[name]
+            return self.memory[name]
         return None
 
     def put(self, name, value):             # puts into memory current value of variable <name>
-        self.dict[name] = value
-
+        self.memory[name] = value
 
 class MemoryStack:
     def __init__(self, memory=None):        # initialize memory stack with memory <memory>
@@ -50,6 +49,3 @@ class MemoryStack:
 
     def pop(self):                          # pops the top memory from the stack
         return self.stack.pop()
-
-    def peek(self):
-        return self.stack[-1]
