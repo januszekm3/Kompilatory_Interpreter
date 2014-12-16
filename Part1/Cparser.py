@@ -3,6 +3,7 @@
 from scanner import Scanner
 import AST
 import sys
+import TreePrinter
 
 class Cparser(object):
 
