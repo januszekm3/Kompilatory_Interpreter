@@ -55,7 +55,6 @@ class TypeChecker(NodeVisitor):
         type2 = self.visit(node.right)    # type2 = node.right.accept(self)
         op    = node.op;
 
-
         type = ttype[op][type1][type2]
         if type == 'error':
             print "Wrong expression type at " + node.line.__str__()
