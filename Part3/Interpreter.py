@@ -55,11 +55,11 @@ class Interpreter(object):
     def visit(self, expr):
         return expr
 
-    @when(AST.FunCall)
-    def visit(self, node):
-        args = node.args.accept(self)
-        fun = node.name.accept(self)
-        return fun(*args)
+#    @when(AST.FunCall)
+#    def visit(self, node):
+#        args = node.args.accept(self)
+#        fun = node.name.accept(self)
+#        return fun(*args)
 
     @when(AST.BrackExpr)
     def visit(self, expr):
