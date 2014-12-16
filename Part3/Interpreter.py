@@ -166,7 +166,7 @@ class Interpreter(object):
         try:
             while node.cond.accept(self):
                 try:
-                    r = node.instr.accept(self, scope)
+                    r = node.instr.accept(self)
                 except ContinueException:
                     pass
         except BreakException:
@@ -185,7 +185,7 @@ class Interpreter(object):
                 except ContinueException:
                     pass
 
-                run = not node.cond.accept(self, scope)
+                run = not node.cond.accept(self)
         except BreakException:
             pass
         return r
