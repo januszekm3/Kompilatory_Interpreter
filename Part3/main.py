@@ -9,8 +9,8 @@ from Interpreter import Interpreter
 if __name__ == '__main__':
 
     try:
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"
-        filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"
+        filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fib.in"
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\funcdef.in"
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\gcd.in"
@@ -31,6 +31,6 @@ if __name__ == '__main__':
     ast = parser.parse(text, lexer=Cparser.scanner)
     if ast:
         ast.accept(Interpreter())
-        print "Interpretation finished"
+        print "\nInterpretation finished\n"
     else:
-        sys.stderr.write("Syntax check failed")
+        sys.stderr.write("\nSyntax check failed\n")

@@ -79,7 +79,6 @@ class TypeChecker(NodeVisitor):
                 else:
                     variable = cst.get(node.expr)
 
-
             return variable.type
 
     def visit_FunCall(self, node):
