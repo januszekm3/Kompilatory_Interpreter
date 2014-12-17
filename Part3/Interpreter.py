@@ -52,13 +52,14 @@ class Interpreter(object):
     def visit(self, node, scope=0):
         r1 = node.left.accept(self, scope)
         r2 = node.right.accept(self, scope)
-        #print 'jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem '
-        print optype[node.op](r1, r2)
         return optype[node.op](r1, r2)
 
     @when(AST.UnExpr)
     def visit(self, node, scope=0):
-        return node.expr.accept(self, scope)
+        print 'zawartosc UnExpr.node.expr:'
+        print node.expr
+        print node.expr.accept(self, scope)
+        #return node.expr.accept(self, scope)
 
     @when(AST.FunCall)
     def visit(self, node, scope=0):
@@ -68,7 +69,6 @@ class Interpreter(object):
 
     @when(AST.BrackExpr)
     def visit(self, node, scope=0):
-        #print 'jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem '
         return node.expr.accept(self, scope)
 
     @when(AST.Init)
@@ -99,15 +99,17 @@ class Interpreter(object):
 
     @when(AST.Arg)
     def visit(self, node, scope=0):
-        pass
+        node.name.accept(self, scope)
+        node.type.accept(self, scope)
 
     @when(AST.ArgsList)
     def visit(self, node, scope=0):
-        pass
+        for i in node.list:
+            i.accept(self, scope)
 
     @when(AST.Condition)
     def visit(self, node, scope=0):
-        pass
+        return node.expr.accept(self, scope)
 
     @when(AST.ExprList)
     def visit(self, node, scope=0):
