@@ -82,7 +82,7 @@ class Interpreter(object):
     @when(AST.Inits)
     def visit(self, node, scope=0):
         for i in node.list:
-            i.accept(self)
+            i.accept(self, scope)
 
     @when(AST.Declaration)
     def visit(self, node, scope=0):
@@ -91,7 +91,7 @@ class Interpreter(object):
     @when(AST.Declarations)
     def visit(self, node, scope=0):
         for i in node.list:
-            i.accept(self)
+            i.accept(self, scope)
 
     @when(AST.Epsilon)
     def visit(self, node, scope=0):
@@ -112,7 +112,7 @@ class Interpreter(object):
     @when(AST.ExprList)
     def visit(self, node, scope=0):
         for i in node.list:
-            i.accept(self)
+            i.accept(self, scope)
 
     @when(AST.Instruction)
     def visit(self, node, scope=0):
@@ -168,7 +168,7 @@ class Interpreter(object):
     @when(AST.Instructions)
     def visit(self, node, scope=0):
         for i in node.list:
-            i.accept(self)
+            i.accept(self, scope)
 
     @when(AST.WhileInstr)
     def visit(self, node, scope=0):
@@ -229,7 +229,7 @@ class Interpreter(object):
     @when(AST.FunDefs)
     def visit(self, node, scope=0):
         for i in node.list:
-            i.accept(self)
+            i.accept(self, scope)
 
     @when(AST.Integer)
     def visit(self, node, scope=0):
