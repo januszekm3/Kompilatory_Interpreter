@@ -58,8 +58,9 @@ class Interpreter(object):
     def visit(self, node, scope=0):
         print 'zawartosc UnExpr.node.expr:'
         print node.expr
+        print 'zawartosc UnExpr.node.expr.accept(self, scope):'
         print node.expr.accept(self, scope)
-        #return node.expr.accept(self, scope)
+        return node.expr.accept(self, scope)
 
     @when(AST.FunCall)
     def visit(self, node, scope=0):

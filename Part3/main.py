@@ -11,16 +11,16 @@ if __name__ == '__main__':
     os.sys.setrecursionlimit(5000)
 
     try:
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"
-        filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fib.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\funcdef.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\gcd.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\if.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\ifelse.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\loops.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\primes.in"
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\scopes.in"
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"          #bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"          #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fib.in"           #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\funcdef.in"       #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\gcd.in"           #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\if.in"            #bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\ifelse.in"        #bangla
+        filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\loops.in"         #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\primes.in"        #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\scopes.in"        #nie bangla
         file = open(filename, "r")
     except IOError:
         print("Cannot open {0} file".format(filename))
