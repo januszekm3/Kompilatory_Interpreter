@@ -56,8 +56,7 @@ class Interpreter(object):
 
     @when(AST.UnExpr)
     def visit(self, node, scope=0):
-        val = node.expr.accept(self, scope)
-        return val
+        return node.expr.accept(self, scope)
 
     @when(AST.FunCall)
     def visit(self, node, scope=0):
@@ -67,8 +66,7 @@ class Interpreter(object):
 
     @when(AST.BrackExpr)
     def visit(self, node, scope=0):
-        val = node.expr.accept(self, scope)
-        return val
+        return node.expr.accept(self, scope)
 
     @when(AST.Init)
     def visit(self, node, scope=0):
