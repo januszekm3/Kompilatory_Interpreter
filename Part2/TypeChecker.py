@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from ttype import ttype
-import AST
+import Part1.AST as AST
 import SymbolTable
  
 class NodeVisitor(object):
