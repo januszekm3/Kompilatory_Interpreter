@@ -52,6 +52,8 @@ class Interpreter(object):
     def visit(self, node, scope=0):
         r1 = node.left.accept(self, scope)
         r2 = node.right.accept(self, scope)
+        #print 'jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem '
+        print optype[node.op](r1, r2)
         return optype[node.op](r1, r2)
 
     @when(AST.UnExpr)
@@ -66,6 +68,7 @@ class Interpreter(object):
 
     @when(AST.BrackExpr)
     def visit(self, node, scope=0):
+        #print 'jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem jestem '
         return node.expr.accept(self, scope)
 
     @when(AST.Init)
