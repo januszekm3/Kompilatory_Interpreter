@@ -102,7 +102,6 @@ class Interpreter(object):
     def visit(self, node, scope=0):
         pass
 
-#?#
     @when(AST.Condition)
     def visit(self, node, scope=0):
         pass
