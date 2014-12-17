@@ -18,9 +18,9 @@ if __name__ == '__main__':
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\gcd.in"           #nie bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\if.in"            #bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\ifelse.in"        #bangla
-        filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\loops.in"         #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\loops.in"         #bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\primes.in"        #nie bangla
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\scopes.in"        #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\scopes.in"        #bangla
         file = open(filename, "r")
     except IOError:
         print("Cannot open {0} file".format(filename))

@@ -56,11 +56,10 @@ class Interpreter(object):
 
     @when(AST.UnExpr)
     def visit(self, node, scope=0):
-        print 'zawartosc UnExpr.node.expr:'
-        print node.expr
-        print 'zawartosc UnExpr.node.expr.accept(self, scope):'
-        print node.expr.accept(self, scope)
-        return node.expr.accept(self, scope)
+        if self.memory_stack[scope][node.expr]!=None:
+            return self.memory_stack[scope][node.expr]
+        else:
+            return node.expr.accept(self, scope)
 
     @when(AST.FunCall)
     def visit(self, node, scope=0):
@@ -248,4 +247,4 @@ class Interpreter(object):
 
     @when(AST.Variable)
     def visit(self, node, scope=0):
-        pass
+        return self.memory_stack[scope][node.name]
