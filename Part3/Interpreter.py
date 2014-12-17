@@ -64,7 +64,7 @@ class Interpreter(object):
     @when(AST.FunCall)
     def visit(self, node, scope=0):
         args = node.args.accept(self, scope)
-        name = node.name.accept(self, scope)
+        name = self.memory_stack[scope][node.name]
         return name(*args)
 
     @when(AST.BrackExpr)
@@ -99,8 +99,8 @@ class Interpreter(object):
 
     @when(AST.Arg)
     def visit(self, node, scope=0):
-        node.name.accept(self, scope)
-        node.type.accept(self, scope)
+        self.memory_stack[scope][node.name] = node.type
+        return node.type
 
     @when(AST.ArgsList)
     def visit(self, node, scope=0):
@@ -218,7 +218,7 @@ class Interpreter(object):
                 raise Exception("{0} takes {1} argument(s); {2} given".format(node.name, len(node.args), len(args)))
 
             for i in range(len(node.args)):
-                argument = node.args.elements[i]
+                argument = node.args[i]
                 self.memory_stack[new_scope][argument.name] = args[i]
 
             try:
