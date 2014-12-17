@@ -61,8 +61,8 @@ class Interpreter(object):
     @when(AST.FunCall)
     def visit(self, node, scope=0):
         args = node.args.accept(self, scope)
-        fun = node.name.accept(self, scope)
-        return fun(*args)
+        name = node.name.accept(self, scope)
+        return name(*args)
 
     @when(AST.BrackExpr)
     def visit(self, node, scope=0):
