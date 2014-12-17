@@ -110,7 +110,7 @@ class Interpreter(object):
     def visit(self, node, scope=0):
         for i in node.list:
             i.accept(self)
-            
+
     @when(AST.Instruction)
     def visit(self, node, scope=0):
         pass
@@ -145,7 +145,6 @@ class Interpreter(object):
     @when(AST.LabeledInstr)
     def visit(self, node, scope=0):
         return node.instruction.accept(self, scope)
-
 
     @when(AST.ChoiceInstruction)
     def visit(self, node, scope=0):
