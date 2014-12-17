@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     try:
         #filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"          #bangla
-        filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"          #nie bangla
+        #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"          #nie bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fib.in"           #nie bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\funcdef.in"       #nie bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\gcd.in"           #nie bangla
