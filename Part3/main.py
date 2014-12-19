@@ -11,7 +11,7 @@ if __name__ == '__main__':
     os.sys.setrecursionlimit(5000)
 
     try:
-        #filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"          #bangla
+        filename = sys.argv[1] if len(sys.argv) > 1 else "acceptance_test.py"          #bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fact.in"          #nie bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\fib.in"           #nie bangla
         #filename = sys.argv[1] if len(sys.argv) > 1 else "..\\tests\\funcdef.in"       #nie bangla

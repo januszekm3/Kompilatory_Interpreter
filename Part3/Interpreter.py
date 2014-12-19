@@ -29,14 +29,14 @@ optype["||"] = lambda x, y: 1 if (x or y) else 0
 
 class Interpreter(object):
     def __init__(self):
-        self.memory_stack = defaultdict(lambda: Memory(self.memory_stack[0]))
-        self.memory_stack[0] = Memory()
-        self.curr_stack = 1
+        self.memoryStack = defaultdict(lambda: Memory(self.memoryStack[0]))
+        self.memoryStack[0] = Memory()
+        self.currentStack = 1
 
     def get_scope(self, scope):
-        self.curr_stack += 1
-        self.memory_stack[self.curr_stack] = Memory(self.memory_stack[scope])
-        return self.curr_stack
+        self.currentStack += 1
+        self.memoryStack[self.currentStack] = Memory(self.memoryStack[scope])
+        return self.currentStack
 
     @on('node')
     def visit(self, node, scope=0):
@@ -56,15 +56,15 @@ class Interpreter(object):
 
     @when(AST.UnExpr)
     def visit(self, node, scope=0):
-        if self.memory_stack[scope][node.expr]!=None:
-            return self.memory_stack[scope][node.expr]
+        if self.memoryStack[scope][node.expr]!=None:
+            return self.memoryStack[scope][node.expr]
         else:
             return node.expr.accept(self, scope)
 
     @when(AST.FunCall)
     def visit(self, node, scope=0):
         args = node.args.accept(self, scope)
-        name = self.memory_stack[scope][node.name]
+        name = self.memoryStack[scope][node.name]
         return name(*args)
 
     @when(AST.BrackExpr)
@@ -73,10 +73,10 @@ class Interpreter(object):
 
     @when(AST.Init)
     def visit(self, node, scope=0):
-        if node.name in self.memory_stack[scope].keys():
+        if node.name in self.memoryStack[scope].keys():
             raise Exception("Variable {0} already defined".format(node.name))
         value = node.value.accept(self, scope)
-        self.memory_stack[scope][node.name] = value
+        self.memoryStack[scope][node.name] = value
         return value
 
     @when(AST.Inits)
@@ -99,7 +99,7 @@ class Interpreter(object):
 
     @when(AST.Arg)
     def visit(self, node, scope=0):
-        self.memory_stack[scope][node.name] = node.type
+        self.memoryStack[scope][node.name] = node.type
         return node.type
 
     @when(AST.ArgsList)
@@ -128,9 +128,9 @@ class Interpreter(object):
 
     @when(AST.Assignment)
     def visit(self, node, scope=0):
-        if node.name in self.memory_stack[scope].scope_keys():
+        if node.name in self.memoryStack[scope].scope_keys():
             value = node.expr.accept(self, scope)
-            self.memory_stack[scope].scope_setitem(node.name, value)
+            self.memoryStack[scope].scope_setitem(node.name, value)
             return value
         else:
             raise Exception("Undeclared variable {0}".format(node.name))
@@ -219,14 +219,14 @@ class Interpreter(object):
 
             for i in range(len(node.args)):
                 argument = node.args[i]
-                self.memory_stack[new_scope][argument.name] = args[i]
+                self.memoryStack[new_scope][argument.name] = args[i]
 
             try:
                 node.instr.accept(self, scope=new_scope)
             except ReturnValueException as e:
                 return e.value
 
-        self.memory_stack[scope][node.name] = fun
+        self.memoryStack[scope][node.name] = fun
 
     @when(AST.FunDefs)
     def visit(self, node, scope=0):
@@ -247,4 +247,4 @@ class Interpreter(object):
 
     @when(AST.Variable)
     def visit(self, node, scope=0):
-        return self.memory_stack[scope][node.name]
+        return self.memoryStack[scope][node.name]
